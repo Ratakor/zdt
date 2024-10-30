@@ -213,19 +213,13 @@ pub const Tz = struct {
         };
     }
 
-    pub fn deinit(self: *Tz) void {
+    pub fn deinit(self: Tz) void {
         if (self.footer) |footer| {
             self.allocator.free(footer);
-            self.footer = null;
         }
         self.allocator.free(self.leapseconds);
         self.allocator.free(self.transitions);
         self.allocator.free(self.timetypes);
-
-        // set emtpy slices to prevent a segfault if the tz is used after deinit
-        self.leapseconds = &.{};
-        self.transitions = &.{};
-        self.timetypes = &.{Timetype{ .offset = 0, .flags = 0, .name_data = [6:0]u8{ 0, 0, 0, 0, 0, 0 } }};
     }
 };
 

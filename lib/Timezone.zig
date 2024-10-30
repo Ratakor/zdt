@@ -134,15 +134,11 @@ pub fn fromSystemTzdata(identifier: []const u8, db_path: []const u8, allocator: 
     return tz;
 }
 
-/// Clear a TZ instance and free potentially used memory
-pub fn deinit(tz: *Timezone) void {
-    tz.__name_data = std.mem.zeroes([cap_name_data]u8);
-    tz.__name_data_len = 0;
-
+/// Free potentially used memory from a Timezone instance.
+pub fn deinit(tz: Timezone) void {
     switch (tz.rules) {
-        .tzif => |*_tzif| _tzif.deinit(),
-        .posixtz => return,
-        .utc => return,
+        .tzif => |_tzif| _tzif.deinit(),
+        .posixtz, .utc => {},
     }
 }
 
